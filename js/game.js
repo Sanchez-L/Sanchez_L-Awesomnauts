@@ -39,10 +39,13 @@ var game = {
 
 	// Run on game resources loaded.
 	"loaded" : function () {
+                me.pool.register("player", game.playerEntity, true);
+                //sets the screen to title
 		me.state.set(me.state.MENU, new game.TitleScreen());
+                //sets the screen in play mode
 		me.state.set(me.state.PLAY, new game.PlayScreen());
 
-		// Start the game.
+		// Starts the game.
 		me.state.change(me.state.PLAY);
 	}
 };

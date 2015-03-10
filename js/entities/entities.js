@@ -14,7 +14,7 @@ game.playerEntity = me.Entity.extend({
         this.body.setVelocity(5, 20);
 
         this.renderable.addAnimation("idle", [39]);
-        this.renderable.addAnimation("smallWalk", [143, 144, 145, 146, 147, 148, 149, 150, 151], 159);
+        this.renderable.addAnimation("walk", [143, 144, 145, 146, 147, 148, 149, 150, 151], 159);
         this.renderable.setCurrentAnimation("idle");
     },
     update: function(delta) {
@@ -23,20 +23,19 @@ game.playerEntity = me.Entity.extend({
             this.body.vel.x += this.body.accel.x * me.timer.tick;
             //this line says to unflip the aniimation 
             this.flipX(false);
-        } else {
-            this.body.vel.x = 0;
-        }
-        if(!this.renderable.isCurrentAnimation("walk")) {
-            this.renderable.setCurrentAnimation("walk");
-        }
-        
-        //this checks if a left button is pressed.
-        if (me.input.isKeyPressed("left")) {
+        } else if (me.input.isKeyPressed("left")) {
             this.body.vel.x -= this.body.accel.x * me.timer.tick;
             this.flipX(true);
-        } else {
+        }
+        else {
             this.body.vel.x = 0;
         }
+        if (!this.renderable.isCurrentAnimation("walk")) {
+            this.renderable.setCurrentAnimation("walk");
+        }
+
+        //this checks if a left button is pressed.
+
         //this checks if the player jumps
         if (me.input.isKeyPressed('jump')) {
 //            console.log(me.state);
@@ -53,11 +52,11 @@ game.playerEntity = me.Entity.extend({
             }
         }
         //these are my controlles for my player
-        me.collision.check(this, true, this.collideHandler.bind(this), true);
+        //me.collision.check(this, true, this.collideHandler.bind(this), true);
         //this is the position between mario and whatever he hits or lands on 
         if (this.body.vel.x !== 0) {
-            if (!this.renderable.isCurrentAnimation("smallWalk")) {
-                this.renderable.setCurrentAnimation("smallWalk");
+            if (!this.renderable.isCurrentAnimation("walk")) {
+                this.renderable.setCurrentAnimation("walk");
                 this.renderable.setAnimationFrame();
             }
         } else {
@@ -69,5 +68,71 @@ game.playerEntity = me.Entity.extend({
         this.body.update(delta);
         this._super(me.Entity, "update", [delta]);
         return true;
+    }
+});
+
+game.PlayerBaseEntity = me.Entity.extend({
+    init: function(x, y, settings) {
+        this._super(me.Entity, 'init' [x, y, {
+            image: "tower",
+            width: 100,
+            heighT: 100,
+            spritewidth: "100",
+            spriteheight: "100",
+            getShape: function() {
+                return(new me.Rect(0, 0, 100, 100)).toPolygon();
+                this.broken = false;
+                this.health = 10;
+                this.alwaysUpdate = true;
+                this.body.onCollision = this.onCollision.bind(this);
+
+                this.type = "PlayerBaseEntity";
+            }
+        }]);
+    },
+    update: function(delta) {
+        if (this.health <= 0) {
+            this.broken = true;
+        }
+        this.body.update(delta);
+        this._super(me.Entity,  "update", [delta]);
+        return true;
+    },
+    
+    onCollision: function(){
+        
+    }
+});
+
+game.EnemyBaseEntity = me.Entity.extend({
+    init: function(x, y, settings) {
+        this._super(me.Entity, 'init' [x, y, {
+            image: "tower",
+            width: 100,
+            heighT: 100,
+            spritewidth: "100",
+            spriteheight: "100",
+            getShape: function() {
+                return(new me.Rect(0, 0, 100, 100)).toPolygon();
+                this.broken = false;
+                this.health = 10;
+                this.alwaysUpdate = true;
+                this.body.onCollision = this.onCollision.bind(this);
+
+                this.type = "EnemyBaseEntity";
+            }
+        }]);
+    },
+    update: function(delta) {
+        if (this.health <= 0) {
+            this.broken = true;
+        }
+        this.body.update(delta);
+        this._super(me.Entity,  "update", [delta]);
+        return true;
+    },
+    
+    onCollision: function(){
+        
     }
 });

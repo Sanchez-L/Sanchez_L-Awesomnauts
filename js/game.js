@@ -40,6 +40,9 @@ var game = {
 	// Run on game resources loaded.
 	"loaded" : function () {
                 me.pool.register("player", game.playerEntity, true);
+                me.pool.register("PlayerBase", game.PlayerBaseEntity);
+                me.pool.register("EnemyBase", game.EnemyBaseEntity);
+                
                 //sets the screen to title
 		me.state.set(me.state.MENU, new game.TitleScreen());
                 //sets the screen in play mode

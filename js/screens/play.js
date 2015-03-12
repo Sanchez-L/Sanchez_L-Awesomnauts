@@ -17,6 +17,8 @@ game.PlayScreen = me.ScreenObject.extend({
              me.input.bindKey(me.input.KEY.LEFT, "left");
              //helps my player jumo up
              me.input.bindKey(me.input.KEY.UP, "jump");
+             
+             me.input.bindKey(me.input.KEY.SPACE, "attack");
 
 		// add our HUD to the game world
 		this.HUD = new game.HUD.Container();

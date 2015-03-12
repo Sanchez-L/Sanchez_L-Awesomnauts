@@ -17,6 +17,7 @@ game.playerEntity = me.Entity.extend({
         this.renderable.addAnimation("idle", [39]);
         this.renderable.addAnimation("walk", [143, 144, 145, 146, 147, 148, 149, 150, 151], 159);
         this.renderable.setCurrentAnimation("idle");
+        this.renderable.addAnimation("attack", [65, 66, 67, 68, 69, 70, 71, 72], 80);
     },
     update: function(delta) {
         //check if right button is pressed
@@ -31,9 +32,7 @@ game.playerEntity = me.Entity.extend({
         else {
             this.body.vel.x = 0;
         }
-        if (!this.renderable.isCurrentAnimation("walk")) {
-            this.renderable.setCurrentAnimation("walk");
-        }
+
 
         //this checks if a left button is pressed.
 
@@ -55,15 +54,27 @@ game.playerEntity = me.Entity.extend({
         //these are my controlles for my player
         //me.collision.check(this, true, this.collideHandler.bind(this), true);
         //this is the position between mario and whatever he hits or lands on 
-        if (this.body.vel.x !== 0) {
+        
+        if (me.input.isKeyPressed("attack")) {
+            console.log("attack1");
+            if (!this.renderable.isCurrentAnimation("attack")) {
+                console.log("attack2");
+                //sets the currnt animation to attack and thenn go back to animation
+                this.renderable.setCurrentAnimation("attack");
+                //makes it so that the next time we start this sequence we begin
+                //from the first animation not wherever we switched to another animation
+                this.renderable.setAnimationFrame();
+            }
+        }
+        else if (this.body.vel.x !== 0) {
             if (!this.renderable.isCurrentAnimation("walk")) {
                 this.renderable.setCurrentAnimation("walk");
-                this.renderable.setAnimationFrame();
+
             }
         } else {
             this.renderable.setCurrentAnimation("idle");
         }
-
+        
 
 
         this.body.update(delta);

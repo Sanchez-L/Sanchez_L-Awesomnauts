@@ -12,6 +12,8 @@ game.playerEntity = me.Entity.extend({
                 }
             }]);
         this.body.setVelocity(7, 20);
+        //keeps track on what direction my player is facing
+        this.facing = "right";
         me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
 
         this.renderable.addAnimation("idle", [39]);
@@ -23,9 +25,12 @@ game.playerEntity = me.Entity.extend({
         //check if right button is pressed
         if (me.input.isKeyPressed("right")) {
             this.body.vel.x += this.body.accel.x * me.timer.tick;
-            //this line says to unflip the aniimation 
+            //this line says to unflip the animation when going right
+            this.facing = "right";
             this.flipX(false);
         } else if (me.input.isKeyPressed("left")) {
+            this.facing = "left";
+            //this line says to unflip the animation when going right
             this.body.vel.x -= this.body.accel.x * me.timer.tick;
             this.flipX(true);
         }
@@ -54,7 +59,7 @@ game.playerEntity = me.Entity.extend({
         //these are my controlles for my player
         //me.collision.check(this, true, this.collideHandler.bind(this), true);
         //this is the position between mario and whatever he hits or lands on 
-        
+
         if (me.input.isKeyPressed("attack")) {
             console.log("attack1");
             if (!this.renderable.isCurrentAnimation("attack")) {
@@ -74,12 +79,25 @@ game.playerEntity = me.Entity.extend({
         } else {
             this.renderable.setCurrentAnimation("idle");
         }
-        
 
+        me.collision.check(this, true, this.collideHandler.bind(this), true);
 
         this.body.update(delta);
         this._super(me.Entity, "update", [delta]);
         return true;
+    },
+    collideHandler: function(response) {
+//        console.log(response.b.type);
+        if (response.b.type === 'EnemyBaseEntity') {
+            var ydif = this.pos.y - response.b.pos.y;
+            var xdif = this.pos.x - response.b.pos.x;
+
+            console.log("xdif" + xdif + "ydif" + ydif);
+             if(xdif>-35) {
+            this.body.vel.x = 0;
+            this.pos.x = this.pos.x -1;
+            }
+        }
     }
 });
 
@@ -92,16 +110,16 @@ game.PlayerBaseEntity = me.Entity.extend({
                 spritewidth: "100",
                 spriteheight: "100",
                 getShape: function() {
-                    return(new me.Rect(0, 0, 100, 100)).toPolygon();
-                    this.broken = false;
-                    this.health = 10;
-                    this.alwaysUpdate = true;
-                    this.body.onCollision = this.onCollision.bind(this);
-
-                    this.type = "PlayerBaseEntity";
+                    return(new me.Rect(0, 0, 100, 70)).toPolygon();
                 }
 
             }]);
+        this.broken = false;
+        this.health = 10;
+        this.alwaysUpdate = true;
+        this.body.onCollision = this.onCollision.bind(this);
+
+        this.type = "PlayerBaseEntity";
         this.renderable.addAnimation("idle", [0]);
         this.renderable.addAnimation("broken", [1]);
         this.renderable.setCurrentAnimation("idle");
@@ -129,15 +147,16 @@ game.EnemyBaseEntity = me.Entity.extend({
                 spritewidth: "100",
                 spriteheight: "100",
                 getShape: function() {
-                    return(new me.Rect(0, 0, 100, 100)).toPolygon();
-                    this.broken = false;
-                    this.health = 10;
-                    this.alwaysUpdate = true;
-                    this.body.onCollision = this.onCollision.bind(this);
+                    return(new me.Rect(0, 0, 100, 70)).toPolygon();
 
-                    this.type = "EnemyBaseEntity";
                 }
             }]);
+        this.broken = false;
+        this.health = 10;
+        this.alwaysUpdate = true;
+        this.body.onCollision = this.onCollision.bind(this);
+
+        this.type = "EnemyBaseEntity";
         this.renderable.addAnimation("idle", [0]);
         this.renderable.addAnimation("broken", [1]);
         this.renderable.setCurrentAnimation("idle");

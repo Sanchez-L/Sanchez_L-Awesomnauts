@@ -11,7 +11,7 @@ game.playerEntity = me.Entity.extend({
                     return(new me.Rect(0, 0, 64, 64)).toPolygon();
                 }
             }]);
-        this.body.setVelocity(7, 20);
+        this.body.setVelocity(10, 15);
         //keeps track on what direction my player is facing
         this.facing = "right";
         me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
@@ -55,50 +55,59 @@ game.playerEntity = me.Entity.extend({
                 // play some audio 
                 me.audio.play("jump");
             }
-        }
-        //these are my controlles for my player
-        //me.collision.check(this, true, this.collideHandler.bind(this), true);
-        //this is the position between mario and whatever he hits or lands on 
+            //these are my controlles for my player
+            //me.collision.check(this, true, this.collideHandler.bind(this), true);
+            //this is the position between mario and whatever he hits or lands on 
 
-        if (me.input.isKeyPressed("attack")) {
-            console.log("attack1");
-            if (!this.renderable.isCurrentAnimation("attack")) {
-                console.log("attack2");
-                //sets the currnt animation to attack and thenn go back to animation
-                this.renderable.setCurrentAnimation("attack");
-                //makes it so that the next time we start this sequence we begin
-                //from the first animation not wherever we switched to another animation
-                this.renderable.setAnimationFrame();
+            if (me.input.isKeyPressed("attack")) {
+                console.log("attack1");
+                if (!this.renderable.isCurrentAnimation("attack")) {
+                    console.log("attack2");
+                    //sets the currnt animation to attack and thenn go back to animation
+                    this.renderable.setCurrentAnimation("attack");
+                    //makes it so that the next time we start this sequence we begin
+                    //from the first animation not wherever we switched to another animation
+                    this.renderable.setAnimationFrame();
+                }
             }
-        }
-        else if (this.body.vel.x !== 0) {
-            if (!this.renderable.isCurrentAnimation("walk")) {
-                this.renderable.setCurrentAnimation("walk");
+            else if (this.body.vel.x !== 0) {
+                if (!this.renderable.isCurrentAnimation("walk")) {
+                    this.renderable.setCurrentAnimation("walk");
 
+                }
+            } else {
+                this.renderable.setCurrentAnimation("idle");
             }
-        } else {
-            this.renderable.setCurrentAnimation("idle");
+
+            me.collision.check(this, true, this.collideHandler.bind(this), true);
+
+            this.body.update(delta);
+            this._super(me.Entity, "update", [delta]);
+            return true;
         }
-
-        me.collision.check(this, true, this.collideHandler.bind(this), true);
-
-        this.body.update(delta);
-        this._super(me.Entity, "update", [delta]);
-        return true;
     },
-    collideHandler: function(response) {
-//        console.log(response.b.type);
-        if (response.b.type === 'EnemyBaseEntity') {
-            var ydif = this.pos.y - response.b.pos.y;
-            var xdif = this.pos.x - response.b.pos.x;
 
-            console.log("xdif" + xdif + "ydif" + ydif);
-             if(xdif>-35) {
-            this.body.vel.x = 0;
-            this.pos.x = this.pos.x -1;
+        collideHandler: function(response) {
+            //console.log(response.b.type);
+            if (response.b.type === 'EnemyBaseEntity', 'PlayerBaseEntity') {
+                var ydif = this.pos.y - response.b.pos.y;
+                var xdif = this.pos.x - response.b.pos.x;
+
+                console.log("xdif" + xdif + "ydif" + ydif);
+
+                if (ydif<-40 && xdif<70 && xdif>-35) {
+                    this.body.falling = false;
+                    this.body.el.y = -1;
+                }
+                else if (xdif>-35 && this.facing === 'right' && (xdif<0)) {
+                    this.body.vel.x = 0;
+                    this.pos.x = this.pos.x -1;
+                } else if (xdif<70 && this.facing === 'left' && xdif>0) {
+                    this.body.vel.x = 0;
+                    this.pos.x = this.pos.x +1;
+                }
             }
         }
-    }
 });
 
 game.PlayerBaseEntity = me.Entity.extend({

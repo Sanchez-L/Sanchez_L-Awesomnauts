@@ -19,7 +19,7 @@ game.playerEntity = me.Entity.extend({
         this.renderable.addAnimation("idle", [39]);
         this.renderable.addAnimation("walk", [117, 118, 119, 120, 121, 122, 123, 124, 125], 159);
         this.renderable.setCurrentAnimation("idle");
-        this.renderable.addAnimation("attack", [89, 90, 91, 92, 93, 94, 95, 96, 97, 98], 80);
+        this.renderable.addAnimation("attack", [156, 157, 158, 159, 160, 161, 162], 80);
     },
     update: function(delta) {
         //check if right button is pressed
@@ -27,12 +27,12 @@ game.playerEntity = me.Entity.extend({
             this.body.vel.x += this.body.accel.x * me.timer.tick;
             //this line says to unflip the animation when going right
             this.facing = "right";
-            this.flipX(false);
+            this.flipX(true);
         } else if (me.input.isKeyPressed("left")) {
             this.facing = "left";
             //this line says to unflip the animation when going right
             this.body.vel.x -= this.body.accel.x * me.timer.tick;
-            this.flipX(true);
+            this.flipX(false);
         }
         else {
             this.body.vel.x = 0;
